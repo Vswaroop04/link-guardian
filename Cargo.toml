@@ -1,0 +1,57 @@
+[package]
+name = "link-guardian"
+version = "0.1.0"
+edition = "2021"
+authors = ["Vishnu Swaroop <vswaroop04@gmail.com>"]
+description = "A CLI tool to scan GitHub repositories and websites for broken links"
+license = "MIT"
+
+# This tells Rust that our main binary is built from src/main.rs
+# and will be named 'link-guardian' when compiled
+[[bin]]
+name = "link-guardian"
+path = "src/main.rs"
+
+[dependencies]
+# clap: Command-line argument parser with derive macros for easy CLI building
+# We use version 4.x with the 'derive' feature for attribute-based parsing
+clap = { version = "4.5", features = ["derive"] }
+
+# tokio: Async runtime that lets us run many tasks concurrently
+# 'full' gives us all features (timers, IO, sync primitives, etc.)
+tokio = { version = "1.35", features = ["full"] }
+
+# reqwest: HTTP client for making web requests
+# 'json' feature helps with JSON parsing, 'rustls-tls' for HTTPS support
+reqwest = { version = "0.11", features = ["json", "rustls-tls"] }
+
+# scraper: HTML parsing and CSS selector support
+# Built on top of html5ever for robust HTML parsing
+scraper = "0.19"
+
+# pulldown-cmark: Markdown parser following CommonMark spec
+# Used to extract links from README.md files
+pulldown-cmark = "0.9"
+
+# url: URL parsing and validation
+# Helps us validate and normalize URLs
+url = "2.5"
+
+# serde: Serialization framework for Rust
+# Used to convert our data structures to/from JSON
+serde = { version = "1.0", features = ["derive"] }
+
+# serde_json: JSON serialization specifically
+serde_json = "1.0"
+
+# anyhow: Easy error handling with context
+# Great for beginners - makes error propagation simple
+anyhow = "1.0"
+
+# futures: Additional async utilities
+# Helps us work with streams and concurrent tasks
+futures = "0.3"
+
+[dev-dependencies]
+# Dependencies only used for testing
+# We can add testing helpers here later
