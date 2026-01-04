@@ -16,7 +16,7 @@ Perfect for:
 - Human-readable table output
 - JSON output for scripting/CI
 - Proper exit codes for CI integration
-- Concurrent link checking (fast!)
+- **Blazing fast concurrent link checking (500 concurrent by default, configurable)**
 - Polite crawling with delays
 
 ## Installation
@@ -57,6 +57,9 @@ link-guardian github https://github.com/rust-lang/rust
 
 # With JSON output
 link-guardian github https://github.com/rust-lang/rust --json
+
+# With custom concurrency (default: 500)
+link-guardian github https://github.com/rust-lang/rust --concurrency 1000
 ```
 
 #### Scan a website
@@ -70,6 +73,9 @@ link-guardian site https://example.com --max-depth 2
 
 # With JSON output
 link-guardian site https://example.com --json
+
+# With custom concurrency for faster checking
+link-guardian site https://example.com --concurrency 1000 --max-depth 2
 ```
 
 ### Command-line Options

@@ -54,6 +54,13 @@ pub enum Commands {
         /// #[arg(long)] creates a flag from the field name
         #[arg(long)]
         json: bool,
+
+        /// Number of concurrent link checks (default: 500)
+        ///
+        /// Higher values = faster checking but may trigger rate limits
+        /// Example: --concurrency 1000
+        #[arg(long, short = 'c', default_value_t = 500)]
+        concurrency: usize,
     },
 
     /// Scan a website for broken links
@@ -81,6 +88,13 @@ pub enum Commands {
         /// #[arg(long, default_value_t = 1)] creates --max-depth flag with default value
         #[arg(long, default_value_t = 1)]
         max_depth: usize,
+
+        /// Number of concurrent link checks (default: 500)
+        ///
+        /// Higher values = faster checking but may trigger rate limits
+        /// Example: --concurrency 1000
+        #[arg(long, short = 'c', default_value_t = 500)]
+        concurrency: usize,
     },
 }
 

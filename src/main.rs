@@ -60,13 +60,13 @@ async fn run() -> Result<i32> {
     // Match on which subcommand was used
     // Each branch handles a different command (github, site)
     match cli.command {
-        Commands::Github { repo_url, json } => {
+        Commands::Github { repo_url, json, concurrency } => {
             // Call our github scanning function
-            handle_github_scan(&repo_url, json).await
+            handle_github_scan(&repo_url, json, concurrency).await
         }
-        Commands::Site { website_url, json, max_depth } => {
+        Commands::Site { website_url, json, max_depth, concurrency } => {
             // Call our website scanning function
-            handle_site_scan(&website_url, json, max_depth).await
+            handle_site_scan(&website_url, json, max_depth, concurrency).await
         }
     }
 }
@@ -75,7 +75,8 @@ async fn run() -> Result<i32> {
 // Parameters:
 //   repo_url: GitHub repository URL (e.g., "https://github.com/user/repo")
 //   json: whether to output JSON format
-async fn handle_github_scan(repo_url: &str, json: bool) -> Result<i32> {
+//   concurrency: number of concurrent link checks
+async fn handle_github_scan(repo_url: &str, json: bool, concurrency: usize) -> Result<i32> {
     println!("🔍 Scanning GitHub repository: {}", repo_url);
 
     // Fetch README and docs from the repository
@@ -101,10 +102,10 @@ async fn handle_github_scan(repo_url: &str, json: bool) -> Result<i32> {
         return Ok(0);
     }
 
-    println!("\n🌐 Checking {} unique link(s)...\n", all_links.len());
+    println!("\n🌐 Checking {} unique link(s) with concurrency {}...\n", all_links.len(), concurrency);
 
     // Check all links for broken status
-    let results = checker::check_links(all_links).await;
+    let results = checker::check_links(all_links, concurrency).await;
 
     // Print results and determine exit code
     print_results(&results, json)?;
@@ -126,7 +127,8 @@ async fn handle_github_scan(repo_url: &str, json: bool) -> Result<i32> {
 //   website_url: Website URL to crawl (e.g., "https://example.com")
 //   json: whether to output JSON format
 //   max_depth: how many levels deep to crawl (default: 1)
-async fn handle_site_scan(website_url: &str, json: bool, max_depth: usize) -> Result<i32> {
+//   concurrency: number of concurrent link checks
+async fn handle_site_scan(website_url: &str, json: bool, max_depth: usize, concurrency: usize) -> Result<i32> {
     println!("🔍 Scanning website: {}", website_url);
     println!("📊 Max crawl depth: {}", max_depth);
 
@@ -152,10 +154,10 @@ async fn handle_site_scan(website_url: &str, json: bool, max_depth: usize) -> Re
     let unique_links: std::collections::HashSet<_> = all_links.into_iter().collect();
     let all_links: Vec<_> = unique_links.into_iter().collect();
 
-    println!("\n🌐 Checking {} unique link(s)...\n", all_links.len());
+    println!("\n🌐 Checking {} unique link(s) with concurrency {}...\n", all_links.len(), concurrency);
 
     // Check all links for broken status
-    let results = checker::check_links(all_links).await;
+    let results = checker::check_links(all_links, concurrency).await;
 
     // Print results and determine exit code
     print_results(&results, json)?;

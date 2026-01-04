@@ -74,12 +74,16 @@ impl LinkCheckResult {
 // This is the main entry point for link checking.
 // It takes a vector of URLs and returns results for all of them.
 //
+// Parameters:
+//   urls: Vector of URLs to check
+//   concurrency: How many links to check at once (default: 500)
+//
 // Why async?
-// - We might check hundreds of links
+// - We might check hundreds or thousands of links
 // - Each HTTP request takes time (network latency)
 // - Running them concurrently is MUCH faster than sequential
-// - Example: 100 links * 1 sec each = 100 sec sequential vs ~5 sec concurrent
-pub async fn check_links(urls: Vec<String>) -> Vec<LinkCheckResult> {
+// - Example: 1000 links * 1 sec each = 1000 sec sequential vs ~5 sec concurrent
+pub async fn check_links(urls: Vec<String>, concurrency: usize) -> Vec<LinkCheckResult> {
     // Create an HTTP client with reasonable settings
     // We'll reuse this client for all requests (connection pooling)
     let client = Client::builder()
@@ -97,15 +101,16 @@ pub async fn check_links(urls: Vec<String>) -> Vec<LinkCheckResult> {
         }
     });
 
-    // Convert futures into a stream and run up to 50 concurrently
-    // .buffer_unordered(50) means: run up to 50 tasks at once, return results
+    // Convert futures into a stream and run multiple concurrently
+    // .buffer_unordered(N) means: run up to N tasks at once, return results
     // as they complete (not in original order, hence "unordered")
     //
-    // Why 50? Balance between:
-    // - Too low: slow checking
-    // - Too high: might overwhelm the network or get rate-limited
+    // Concurrency balance:
+    // - Too low: slow checking (sequential-like performance)
+    // - Too high: might overwhelm the network or get rate-limited by servers
+    // - Default 500: Fast for most use cases without triggering rate limits
     stream::iter(futures)
-        .buffer_unordered(50)
+        .buffer_unordered(concurrency)
         .collect()  // Collect all results into a Vec
         .await
 }
@@ -264,7 +269,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_check_valid_link() {
-        let results = check_links(vec!["https://www.rust-lang.org".to_string()]).await;
+        let results = check_links(vec!["https://www.rust-lang.org".to_string()], 10).await;
         assert_eq!(results.len(), 1);
         // Note: This test requires internet connection
         // In production, you might mock the HTTP client
