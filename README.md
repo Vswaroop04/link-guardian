@@ -1,6 +1,6 @@
 # link-guardian 🔗🛡️
 
-A beginner-friendly Rust CLI tool to scan GitHub repositories and websites for broken links.
+A powerful Rust CLI tool to scan GitHub repositories and websites for broken links.
 
 Perfect for:
 - CI/CD pipelines to catch broken documentation links
@@ -9,15 +9,15 @@ Perfect for:
 
 ## Features
 
-- ✅ Scan GitHub repositories (README.md)
-- ✅ Scan websites with configurable crawl depth
-- ✅ Detect broken links (404, timeouts, SSL errors, etc.)
-- ✅ Detect redirects (301, 302)
-- ✅ Human-readable table output
-- ✅ JSON output for scripting/CI
-- ✅ Proper exit codes for CI integration
-- ✅ Concurrent link checking (fast!)
-- ✅ Polite crawling with delays
+- Scan GitHub repositories (README.md)
+- Scan websites with configurable crawl depth
+- Detect broken links (404, timeouts, SSL errors, etc.)
+- Detect redirects (301, 302)
+- Human-readable table output
+- JSON output for scripting/CI
+- Proper exit codes for CI integration
+- Concurrent link checking (fast!)
+- Polite crawling with delays
 
 ## Installation
 
