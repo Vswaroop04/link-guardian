@@ -5,7 +5,6 @@ A powerful Rust CLI tool to scan GitHub repositories and websites for broken lin
 Perfect for:
 - CI/CD pipelines to catch broken documentation links
 - Maintaining website link health
-- Learning Rust while building a practical tool
 
 ## Features
 
